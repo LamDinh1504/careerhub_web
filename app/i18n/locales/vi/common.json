@@ -1,0 +1,33 @@
+{
+  "language": {
+    "currentLabel": "Ngôn ngữ hiện tại: Tiếng Việt",
+    "switchToEnglish": "Tiếng Anh",
+    "switchToVietnamese": "Tiếng Việt"
+  },
+  "header": {
+    "nav": {
+      "home": "Trang chủ"
+    },
+    "user": {
+      "logout": "Đăng xuất"
+    },
+    "auth": {
+      "login": "Đăng nhập",
+      "register": "Đăng ký"
+    }
+  },
+  "home": {
+    "title": "Hệ thống Quản lý & Xác thực",
+    "subtitle": "Khởi đầu cho đồ án mới của bạn với hệ thống xác thực (Auth) hoàn chỉnh.",
+    "welcome": "Chào mừng trở lại,",
+    "email": "Email",
+    "role": "Vai trò",
+    "status": "Trạng thái",
+    "authenticated": "Đã đăng nhập",
+    "logout": "Đăng xuất",
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "guestTitle": "Bạn chưa đăng nhập",
+    "guestSubtitle": "Vui lòng đăng nhập hoặc đăng ký tài khoản để tiếp tục."
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "language": {
+    "currentLabel": "Current language: English",
+    "switchToEnglish": "English",
+    "switchToVietnamese": "Vietnamese"
+  },
+  "header": {
+    "nav": {
+      "home": "Home"
+    },
+    "user": {
+      "logout": "Logout"
+    },
+    "auth": {
+      "login": "Login",
+      "register": "Register"
+    }
+  },
+  "home": {
+    "title": "Authentication & Management System",
+    "subtitle": "A clean starter for your new project with a fully working Auth system.",
+    "welcome": "Welcome back,",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "authenticated": "Authenticated",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "guestTitle": "You are not logged in",
+    "guestSubtitle": "Please sign in or create an account to get started."
+  }
+}
