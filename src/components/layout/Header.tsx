@@ -1,25 +1,41 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
-import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { useEffect, useState, useRef } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { HiMenu, HiX } from "react-icons/hi";
+import { FiGlobe, FiLogOut, FiUser } from "react-icons/fi";
 
 export function Header() {
   const { locale, locales, setLocale } = useLanguage();
-  const { user, logout } = useAuth();
-  const [isScrolled, setIsScrolled] = useState(false);
+  const { user, logout, isAuthenticated } = useAuth();
+  const isUserLoggedIn = Boolean(isAuthenticated && user);
+  const displayName = user?.fullName || user?.email || "";
+  const displayEmail = user?.email || "";
+  const pathname = usePathname();
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const langMenuRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdowns when clicking outside
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 10);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleClickOutside = (e: MouseEvent) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(e.target as Node)) {
+        setIsLangOpen(false);
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleChangeLocale = (nextLocale: (typeof locales)[number]["code"]) => {
@@ -27,248 +43,249 @@ export function Header() {
     setIsLangOpen(false);
   };
 
-  const currentLocaleLabel =
-    locales.find((item) => item.code === locale)?.label ?? locale;
+  const getLocalizedPath = (path: string) => {
+    if (locale === "vi") return path;
+    return `/${locale}${path === "/" ? "" : path}`;
+  };
 
-  const navItems = [
-    { label: "Trang chủ", href: `/${locale}` },
-    { label: "Việc làm", href: `/${locale}/#jobs` },
-    { label: "Công ty", href: `/${locale}/#companies` },
-    { label: "Cộng đồng", href: `/${locale}/#community` },
-    { label: "Cẩm nang", href: `/${locale}/#resources` },
+  const navLinks = [
+    {
+      path: "/",
+      label: locale === "vi" ? "Trang chủ" : "Home",
+      matchExact: true,
+    },
+    {
+      path: "/#jobs",
+      label: locale === "vi" ? "Việc làm" : "Jobs",
+    },
+    {
+      path: "/#companies",
+      label: locale === "vi" ? "Công ty" : "Companies",
+    },
+    {
+      path: "/#resources",
+      label: locale === "vi" ? "Cẩm nang" : "Resources",
+    },
   ];
 
+  const isLinkActive = (path: string, matchExact?: boolean) => {
+    if (!pathname) return false;
+    const normalizedPathname = pathname.replace(/^\/(vi|en)(\/|$)/, "/").replace(/\/$/, "") || "/";
+    const normalizedTarget = path.replace(/\/$/, "") || "/";
+
+    if (matchExact || normalizedTarget === "/") {
+      return normalizedPathname === "/";
+    }
+    return (
+      normalizedPathname === normalizedTarget ||
+      normalizedPathname.startsWith(`${normalizedTarget}/`)
+    );
+  };
+
   return (
-    <header
-      className={`fixed left-0 top-0 right-0 z-50 transition-all duration-200 bg-white ${
-        isScrolled
-          ? "border-b border-gray-200/80 shadow-xs py-2.5"
-          : "border-b border-gray-100 py-3"
-      }`}
-    >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand Logo */}
-        <Link href={`/${locale}`} className="group flex items-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#16C759] text-white shadow-sm transition-transform group-hover:scale-105">
-            <svg
-              className="h-5 w-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-            </svg>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-lg font-bold tracking-tight text-[#16C759]">
-              Career<span className="text-[#0F1112]">Hub</span>
-            </span>
-            <span className="text-[10px] font-semibold tracking-wider text-gray-500 uppercase">
-              VIỆC LÀM & TÀI NĂNG
-            </span>
-          </div>
+    <header className="fixed top-3 sm:top-4 inset-x-0 z-50 px-3 sm:px-6 w-full max-w-[1340px] mx-auto">
+      <div className="bg-white/95 backdrop-blur-md rounded-xl md:rounded-[16px] border border-[#0D3B2E]/10 px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between shadow-sm">
+        {/* Left: Brand Logo */}
+        <Link
+          href={getLocalizedPath("/")}
+          className="flex items-center gap-2.5 group flex-shrink-0"
+        >
+          <Image
+            src="/home/careerhub-logo.png"
+            alt="CareerHub"
+            width={155}
+            height={34}
+            priority
+            className="h-8 sm:h-8.5 w-auto object-contain transition-transform group-hover:scale-[1.02]"
+          />
         </Link>
 
-        {/* Center Navigation Menu (Desktop) */}
-        <nav className="hidden md:flex items-center gap-7">
-          {navItems.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="text-[14px] font-medium text-gray-700 hover:text-[#16C759] transition-colors"
-            >
-              {item.label}
-            </Link>
-          ))}
+        {/* Center: Desktop Navigation */}
+        <nav className="hidden lg:flex items-center gap-1">
+          {navLinks.map((link) => {
+            const active = isLinkActive(link.path, link.matchExact);
+            return (
+              <Link
+                key={link.path}
+                href={getLocalizedPath(link.path)}
+                className={`text-xs sm:text-sm font-semibold whitespace-nowrap px-3.5 py-2 rounded-[10px] transition-colors flex items-center gap-1.5 ${
+                  active
+                    ? "bg-[#0D3B2E] text-white shadow-sm"
+                    : "text-[#6B8679] hover:text-[#0D3B2E] hover:bg-[#F3FAF5]"
+                }`}
+              >
+                {active && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#28C76F] shrink-0" />
+                )}
+                <span>{link.label}</span>
+              </Link>
+            );
+          })}
         </nav>
 
-        {/* Right Section: Language & Auth CTA */}
-        <div className="flex items-center gap-3">
+        {/* Right: Language & User */}
+        <div className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
           {/* Language Switcher */}
-          <div className="relative">
+          <div className="relative hidden sm:block" ref={langMenuRef}>
             <button
               onClick={() => setIsLangOpen(!isLangOpen)}
               type="button"
-              className="flex h-9 items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50/60 px-3 text-xs font-medium text-gray-700 transition hover:bg-gray-100 focus:outline-hidden"
+              className="flex h-8 items-center gap-1.5 rounded-[8px] border border-[#0D3B2E]/10 bg-[#F3FAF5] hover:bg-slate-100 px-2.5 text-xs font-semibold text-[#0D3B2E] transition-colors whitespace-nowrap cursor-pointer"
+              title="Change Language"
             >
-              <svg
-                className="h-3.5 w-3.5 text-gray-500"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="2" y1="12" x2="22" y2="12" />
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-              </svg>
-              <span className="uppercase">{currentLocaleLabel}</span>
-              <svg
-                className={`h-3 w-3 text-gray-400 transition-transform ${
-                  isLangOpen ? "rotate-180" : ""
-                }`}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
+              <FiGlobe className="w-3.5 h-3.5 text-[#6B8679]" />
+              <span className="uppercase">{locale}</span>
             </button>
 
-            <AnimatePresence>
-              {isLangOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  className="absolute right-0 top-full mt-1.5 w-36 overflow-hidden rounded-xl border border-gray-100 bg-white py-1 shadow-lg z-50"
-                >
-                  {locales.map((item) => (
-                    <button
-                      key={item.code}
-                      onClick={() => handleChangeLocale(item.code)}
-                      type="button"
-                      className={`flex w-full items-center justify-between px-3.5 py-2 text-left text-xs transition-colors ${
-                        item.code === locale
-                          ? "bg-green-50 font-semibold text-[#16C759]"
-                          : "text-gray-700 hover:bg-gray-50"
-                      }`}
-                    >
-                      <span>{item.label}</span>
-                      {item.code === locale && (
-                        <span className="text-[#16C759] font-bold">✓</span>
-                      )}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {isLangOpen && (
+              <div className="absolute right-0 mt-2 w-32 rounded-[12px] border border-slate-200 bg-white p-1.5 z-50 shadow-xl">
+                {locales.map((loc) => (
+                  <button
+                    key={loc.code}
+                    onClick={() => handleChangeLocale(loc.code)}
+                    className={`w-full rounded-[8px] px-3 py-1.5 text-left text-xs font-medium transition-colors cursor-pointer ${
+                      locale === loc.code
+                        ? "bg-[#F3FAF5] text-[#0D3B2E] font-bold"
+                        : "text-[#6B8679] hover:bg-[#F3FAF5] hover:text-[#0D3B2E]"
+                    }`}
+                  >
+                    {loc.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Auth State */}
-          {user ? (
-            <div className="relative">
+          {/* User Profile & Role Switcher Dropdown */}
+          {isUserLoggedIn ? (
+            <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 p-1 pr-3 hover:bg-gray-100 transition"
+                className="flex items-center gap-2 rounded-[10px] border border-[#0D3B2E]/10 bg-[#F3FAF5] hover:bg-slate-100 px-3 py-1.5 text-sm text-[#0D3B2E] transition-colors whitespace-nowrap cursor-pointer"
               >
-                <div className="relative flex h-7 w-7 items-center justify-center overflow-hidden rounded-full bg-[#16C759] text-xs font-bold text-white">
-                  {user.avatar ? (
-                    <Image
-                      src={user.avatar}
-                      alt={user.fullName || ""}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <span>
-                      {(user.fullName || user.email || "U")
-                        .charAt(0)
-                        .toUpperCase()}
-                    </span>
-                  )}
+                <div className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#0D3B2E] text-white font-bold text-xs uppercase">
+                  {displayName ? displayName.charAt(0) : "U"}
                 </div>
-                <span className="text-xs font-medium text-gray-800 max-w-[100px] truncate">
-                  {user.fullName || user.email}
-                </span>
+                <div className="hidden sm:flex flex-col text-left">
+                  <span className="font-bold text-xs text-[#0D3B2E] max-w-[130px] truncate leading-tight">
+                    {displayName}
+                  </span>
+                  <span className="text-[10px] text-[#28C76F] font-bold uppercase">
+                    {user?.role || "Ứng viên"}
+                  </span>
+                </div>
+                <svg
+                  className={`w-3.5 h-3.5 text-[#6B8679] transition-transform ${
+                    isUserMenuOpen ? "rotate-180" : ""
+                  }`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
 
-              <AnimatePresence>
-                {isUserMenuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    className="absolute right-0 top-full mt-2 w-52 overflow-hidden rounded-xl border border-gray-100 bg-white py-1.5 shadow-xl z-50"
+              {isUserMenuOpen && (
+                <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-slate-200 bg-white p-2.5 z-50 shadow-2xl text-xs space-y-1.5">
+                  <div className="p-2.5 bg-[#F3FAF5] rounded-xl space-y-0.5">
+                    <span className="font-bold text-slate-800 truncate block">{displayName}</span>
+                    {displayEmail && <p className="text-[11px] text-slate-500 truncate">{displayEmail}</p>}
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      logout();
+                      setIsUserMenuOpen(false);
+                    }}
+                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                   >
-                    <div className="border-b border-gray-100 px-4 py-2.5">
-                      <p className="text-xs font-semibold text-gray-900 truncate">
-                        {user.fullName || "User"}
-                      </p>
-                      <p className="text-[11px] text-gray-500 truncate">
-                        {user.email}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => {
-                        logout();
-                        setIsUserMenuOpen(false);
-                      }}
-                      className="flex w-full items-center gap-2 px-4 py-2 text-left text-xs text-red-600 hover:bg-red-50 transition-colors"
-                    >
-                      Đăng xuất
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    <FiLogOut className="w-4 h-4 text-rose-500" />
+                    <span>{locale === "vi" ? "Đăng xuất" : "Sign Out"}</span>
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="hidden sm:flex items-center gap-2">
               <Link
-                href="/login"
-                className="rounded-lg px-3.5 py-2 text-xs font-semibold text-gray-700 hover:text-[#16C759] transition-colors"
+                href={`/${locale}/login`}
+                className="rounded-[8px] border border-[#0D3B2E]/15 bg-white hover:bg-[#F3FAF5] px-3.5 py-1.5 text-xs font-bold text-[#0D3B2E] transition-colors"
               >
-                Đăng nhập
+                {locale === "vi" ? "Đăng nhập" : "Sign In"}
               </Link>
               <Link
-                href="/register"
-                className="rounded-xl bg-[#0F1112] px-4 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-gray-800 active:scale-95"
+                href={`/${locale}/register`}
+                className="rounded-[8px] bg-[#0D3B2E] text-white hover:bg-[#155d49] px-3.5 py-1.5 text-xs font-bold shadow-sm transition-colors"
               >
-                Đăng ký
+                {locale === "vi" ? "Đăng ký" : "Sign Up"}
               </Link>
             </div>
           )}
 
-          {/* Mobile hamburger menu button */}
+          {/* Mobile menu button */}
           <button
-            type="button"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden flex h-9 w-9 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="rounded-[8px] p-2 text-[#0D3B2E] hover:bg-[#F3FAF5] transition-colors lg:hidden"
+            aria-label="Toggle Menu"
           >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
-            </svg>
+            {isMenuOpen ? (
+              <HiX className="h-6 w-6 text-[#0D3B2E]" />
+            ) : (
+              <HiMenu className="h-6 w-6 text-[#0D3B2E]" />
+            )}
           </button>
         </div>
       </div>
 
       {/* Mobile Menu Dropdown */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-2"
-          >
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block py-1.5 text-sm font-medium text-gray-700 hover:text-[#16C759]"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isMenuOpen && (
+        <div className="mt-2 rounded-[16px] border border-[#0D3B2E]/10 bg-white p-5 lg:hidden shadow-xl animate-fade-in">
+          <nav className="flex flex-col gap-1.5">
+            {navLinks.map((link) => {
+              const active = isLinkActive(link.path, link.matchExact);
+              return (
+                <Link
+                  key={link.path}
+                  href={getLocalizedPath(link.path)}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`text-sm font-semibold transition-colors px-4 py-2.5 rounded-[10px] flex items-center justify-between ${
+                    active
+                      ? "bg-[#0D3B2E] text-white font-bold"
+                      : "text-[#6B8679] hover:bg-[#F3FAF5] hover:text-[#0D3B2E]"
+                  }`}
+                >
+                  <span>{link.label}</span>
+                  {active && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#28C76F] shrink-0" />
+                  )}
+                </Link>
+              );
+            })}
+
+            {!isUserLoggedIn && (
+              <div className="pt-3 mt-2 border-t border-slate-100 flex flex-col gap-2">
+                <Link
+                  href={`/${locale}/login`}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="w-full py-2.5 text-center text-xs font-bold text-[#0D3B2E] bg-[#F3FAF5] hover:bg-slate-100 rounded-xl transition-colors"
+                >
+                  {locale === "vi" ? "Đăng nhập" : "Sign In"}
+                </Link>
+                <Link
+                  href={`/${locale}/register`}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="w-full py-2.5 text-center text-xs font-bold text-white bg-[#0D3B2E] hover:bg-[#155d49] rounded-xl transition-colors shadow-sm"
+                >
+                  {locale === "vi" ? "Đăng ký tài khoản" : "Create Account"}
+                </Link>
+              </div>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
+
+export default Header;
