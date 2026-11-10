@@ -50,7 +50,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex w-full bg-[#F8FAFC]">
+    <div className="min-h-screen flex w-full bg-[#F3FAF5]">
       {/* Left Column: Bright Green Brand Banner */}
       <AuthSideBanner
         title="CareerHub"
@@ -63,18 +63,18 @@ const LoginForm = () => {
       />
 
       {/* Right Column: Centered Form Card */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 lg:p-12 relative">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 lg:p-12 pt-24 sm:pt-28 relative">
         <div className="w-full max-w-[480px] bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 p-8 sm:p-12">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#0F1112]">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0D3B2E]">
               Chào mừng trở lại
             </h1>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-[#6B8679]">
               Chưa có tài khoản?{" "}
               <Link
                 href="/register"
-                className="font-semibold text-[#16C759] hover:text-[#13A849] hover:underline transition-colors"
+                className="font-semibold text-[#28C76F] hover:text-[#1fa357] hover:underline transition-colors"
               >
                 Đăng ký ngay
               </Link>
@@ -172,7 +172,7 @@ const LoginForm = () => {
             <div className="flex justify-end pt-0.5">
               <Link
                 href="/forgot-password"
-                className="text-xs font-medium text-[#16C759] hover:text-[#13A849] hover:underline transition-colors"
+                className="text-xs font-medium text-[#28C76F] hover:text-[#1fa357] hover:underline transition-colors"
               >
                 Quên mật khẩu?
               </Link>
@@ -182,7 +182,7 @@ const LoginForm = () => {
             <button
               type="submit"
               disabled={isLoggingIn}
-              className="w-full rounded-2xl bg-[#16C759] py-3.5 px-4 text-[15px] font-bold text-white shadow-md shadow-green-500/25 transition-all duration-150 hover:bg-[#14B34F] hover:shadow-lg hover:shadow-green-500/35 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full rounded-2xl bg-[#28C76F] py-3.5 px-4 text-[15px] font-bold text-white shadow-md shadow-green-500/25 transition-all duration-150 hover:bg-[#22b263] hover:shadow-lg hover:shadow-green-500/35 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isLoggingIn ? (
                 <span className="flex items-center justify-center gap-2">
