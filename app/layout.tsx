@@ -1,8 +1,17 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
+import { Manrope } from "next/font/google";
 import { AuthProvider, type AuthUser } from "@/context/AuthContext";
 import { API_URL_CLIENT } from "@/config/apiRoutes";
 import "./globals.css";
+import "./suneditor-contents.css";
+
+const manrope = Manrope({
+  subsets: ["latin", "vietnamese"],
+  variable: "--font-manrope",
+  display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
+});
 
 export const metadata: Metadata = {
   title: "CareerHub",
@@ -91,8 +100,8 @@ export default async function RootLayout({
   const initialUser = accessToken ? await fetchUserOnServer(accessToken) : null;
 
   return (
-    <html lang="en">
-      <body className="bg-gray-50 font-sans antialiased text-gray-900">
+    <html lang="vi" className={manrope.variable}>
+      <body className="bg-[#F3FAF5] font-sans antialiased text-[#0D3B2E]">
         <AuthProvider
           initialUser={initialUser}
           initialAccessToken={accessToken}

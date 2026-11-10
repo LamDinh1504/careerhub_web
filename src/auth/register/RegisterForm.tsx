@@ -93,7 +93,7 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex w-full bg-[#F8FAFC]">
+    <div className="min-h-screen flex w-full bg-[#F3FAF5]">
       {/* Left Column: Bright Green Brand Banner */}
       <AuthSideBanner
         title="CareerHub"
@@ -106,18 +106,18 @@ const RegisterForm = () => {
       />
 
       {/* Right Column: Centered Form Card */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 lg:p-12 relative">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 lg:p-12 pt-24 sm:pt-28 relative">
         <div className="w-full max-w-[500px] bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 p-8 sm:p-12">
           {/* Header */}
           <div className="mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#0F1112]">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0D3B2E]">
               Tạo tài khoản mới
             </h1>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-[#6B8679]">
               Đã có tài khoản?{" "}
               <Link
                 href="/login"
-                className="font-semibold text-[#16C759] hover:text-[#13A849] hover:underline transition-colors"
+                className="font-semibold text-[#28C76F] hover:text-[#1fa357] hover:underline transition-colors"
               >
                 Đăng nhập ngay
               </Link>
@@ -131,7 +131,7 @@ const RegisterForm = () => {
               onClick={() => setRoleType("candidate")}
               className={`rounded-xl py-2 text-xs font-semibold transition-all ${
                 roleType === "candidate"
-                  ? "bg-white text-[#16C759] shadow-xs"
+                  ? "bg-white text-[#28C76F] shadow-xs"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -295,7 +295,7 @@ const RegisterForm = () => {
                   type="checkbox"
                   checked={termsAccepted}
                   onChange={(e) => setTermsAccepted(e.target.checked)}
-                  className="mt-1 h-4 w-4 rounded-md border-gray-300 text-[#16C759] focus:ring-[#16C759] accent-[#16C759]"
+                  className="mt-1 h-4 w-4 rounded-md border-gray-300 text-[#28C76F] focus:ring-[#28C76F] accent-[#28C76F]"
                 />
                 <span className="text-xs text-gray-500 leading-relaxed">
                   Tôi đồng ý với{" "}
@@ -315,7 +315,7 @@ const RegisterForm = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full rounded-2xl bg-[#16C759] py-3.5 px-4 text-[15px] font-bold text-white shadow-md shadow-green-500/25 transition-all duration-150 hover:bg-[#14B34F] hover:shadow-lg hover:shadow-green-500/35 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+              className="w-full rounded-2xl bg-[#28C76F] py-3.5 px-4 text-[15px] font-bold text-white shadow-md shadow-green-500/25 transition-all duration-150 hover:bg-[#22b263] hover:shadow-lg hover:shadow-green-500/35 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed mt-2"
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center gap-2">
@@ -385,7 +385,7 @@ const RegisterForm = () => {
         {/* Small floating chat bot bubble as in reference image */}
         <div className="fixed bottom-6 right-6 z-40 hidden sm:flex">
           <div
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-[#16C759] text-white shadow-lg shadow-green-500/30 cursor-pointer hover:scale-105 transition-transform"
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-[#28C76F] text-white shadow-lg shadow-green-500/30 cursor-pointer hover:scale-105 transition-transform"
             title="Hỗ trợ trực tuyến"
           >
             <svg
