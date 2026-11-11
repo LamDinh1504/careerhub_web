@@ -55,7 +55,7 @@ export function Header() {
       matchExact: true,
     },
     {
-      path: "/#jobs",
+      path: "/jobs",
       label: locale === "vi" ? "Việc làm" : "Jobs",
     },
     {
