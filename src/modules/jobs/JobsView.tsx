@@ -14,6 +14,7 @@ import {
 
 interface JobsViewProps {
   lng?: string;
+  initialCompany?: string;
 }
 
 const INITIAL_FILTERS: JobFilters = {
@@ -25,8 +26,8 @@ const INITIAL_FILTERS: JobFilters = {
   salaryMax: 100,
 };
 
-export const JobsView: React.FC<JobsViewProps> = ({ lng = "vi" }) => {
-  const [filters, setFilters] = useState<JobFilters>(INITIAL_FILTERS);
+export const JobsView: React.FC<JobsViewProps> = ({ lng = "vi", initialCompany = "" }) => {
+  const [filters, setFilters] = useState<JobFilters>({ ...INITIAL_FILTERS, keyword: initialCompany });
   const [sortBy, setSortBy] = useState("relevant");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(1);
@@ -157,7 +158,7 @@ export const JobsView: React.FC<JobsViewProps> = ({ lng = "vi" }) => {
                     : "flex flex-col gap-4"
                 }
               >
-                {filteredJobs.map((job) => (
+                {filteredJobs.slice((currentPage - 1) * 8, currentPage * 8).map((job) => (
                   <JobCardItem
                     key={job.id}
                     job={job}
