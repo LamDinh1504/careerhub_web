@@ -9,10 +9,12 @@ export const metadata: Metadata = {
 
 export default async function JobsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ lng: string }>;
+  searchParams: Promise<{ company?: string | string[] }>;
 }) {
-  const { lng } = await params;
-  return <JobsView lng={lng} />;
+  const [{ lng }, query] = await Promise.all([params, searchParams]);
+  const company = typeof query.company === "string" ? query.company : "";
+  return <JobsView key={company} lng={lng} initialCompany={company} />;
 }
-

@@ -59,11 +59,11 @@ export function Header() {
       label: locale === "vi" ? "Việc làm" : "Jobs",
     },
     {
-      path: "/#companies",
+      path: "/companies",
       label: locale === "vi" ? "Công ty" : "Companies",
     },
     {
-      path: "/#resources",
+      path: "/career-guide",
       label: locale === "vi" ? "Cẩm nang" : "Resources",
     },
   ];
